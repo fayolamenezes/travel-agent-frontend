@@ -1,3 +1,5 @@
+"use client";
+
 import { FormEvent, useState, useEffect } from "react";
 import {
   Search,
@@ -22,6 +24,9 @@ import {
 } from "@/components/ui/select";
 import StreamText, { StreamBody } from "@/components/StreamText";
 import heroImage from "@/assets/hero-beach.jpg";
+
+// 👇 add ScrollTrigger import so we can refresh after layout changes
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 type ItineraryPayload = {
   destination: string;
@@ -84,6 +89,21 @@ export const Hero = () => {
     animateValue(setHappyTravelersCount, 50, 1200);
     animateValue(setRatingCount, 4, 1200, () => setRatingDone(true));
   }, []);
+
+  // 👇 IMPORTANT: when results appear and hero height grows, refresh ScrollTrigger
+  useEffect(() => {
+    if (!showResults) return;
+
+    const id = window.setTimeout(() => {
+      try {
+        ScrollTrigger.refresh();
+      } catch {
+        // ignore if ScrollTrigger isn't available for some reason
+      }
+    }, 100);
+
+    return () => window.clearTimeout(id);
+  }, [showResults]);
 
   const toggleInterest = (interest: string) => {
     setSelectedInterests((prev) =>

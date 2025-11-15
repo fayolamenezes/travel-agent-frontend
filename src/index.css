@@ -338,3 +338,8 @@ All colors MUST be HSL.
 .dfx-scroll-space {
   height: 40vh;
 }
+
+html,
+body {
+  overflow-x: hidden;
+}
