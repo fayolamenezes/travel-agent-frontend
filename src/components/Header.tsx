@@ -14,7 +14,7 @@ export const Header = () => {
             <div className="p-2 rounded-lg gradient-hero">
               <Plane className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-gradient">Wanderlust</span>
+            <span className="text-xl font-bold text-gradient">TravelAgent</span>
           </div>
 
           {/* Desktop Navigation */}

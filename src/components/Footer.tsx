@@ -13,7 +13,7 @@ export const Footer = () => {
               <div className="p-2 rounded-lg bg-white/10">
                 <Plane className="h-6 w-6" />
               </div>
-              <span className="text-xl font-bold">Wanderlust</span>
+              <span className="text-xl font-bold">TravelAgent</span>
             </div>
             <p className="text-primary-foreground/80 mb-4">
               Your trusted partner in creating unforgettable travel experiences around the world.
@@ -94,7 +94,7 @@ export const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span className="text-primary-foreground/80">info@wanderlust.com</span>
+                <span className="text-primary-foreground/80">info@travelagent.com</span>
               </li>
               <li className="flex items-start gap-2">
                 <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
@@ -126,7 +126,7 @@ export const Footer = () => {
 
         {/* Copyright */}
         <div className="border-t border-white/10 pt-8 text-center text-primary-foreground/60 text-sm">
-          <p>&copy; 2024 Wanderlust Travel Agency. All rights reserved.</p>
+          <p>&copy; 2024 Travel Agent. All rights reserved.</p>
         </div>
       </div>
     </footer>

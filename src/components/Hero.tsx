@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import {
   Search,
   MapPin,
@@ -52,6 +52,39 @@ export const Hero = () => {
   const [payload, setPayload] = useState<ItineraryPayload | null>(null);
   const [showResults, setShowResults] = useState(false);
 
+  // stats animation
+  const [destinationsCount, setDestinationsCount] = useState(0);
+  const [happyTravelersCount, setHappyTravelersCount] = useState(0);
+  const [ratingCount, setRatingCount] = useState(0);
+  const [ratingDone, setRatingDone] = useState(false);
+
+  useEffect(() => {
+    const animateValue = (
+      setter: (v: number) => void,
+      target: number,
+      duration: number,
+      onComplete?: () => void
+    ) => {
+      const start = performance.now();
+
+      const tick = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        setter(Math.floor(progress * target));
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else if (onComplete) {
+          onComplete();
+        }
+      };
+
+      requestAnimationFrame(tick);
+    };
+
+    animateValue(setDestinationsCount, 500, 1200);
+    animateValue(setHappyTravelersCount, 50, 1200);
+    animateValue(setRatingCount, 4, 1200, () => setRatingDone(true));
+  }, []);
+
   const toggleInterest = (interest: string) => {
     setSelectedInterests((prev) =>
       prev.includes(interest)
@@ -103,8 +136,8 @@ export const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10 pt-24 pb-16">
-        {/* Headline */}
-        <div className="max-w-4xl mx-auto text-center mb-10">
+        {/* Headline + description */}
+        <div className="max-w-4xl mx-auto text-center mb-8 md:mb-10">
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
             Discover Your Next
             <br />
@@ -114,6 +147,28 @@ export const Hero = () => {
             Tell us where, when, and how you like to travel. Our AI designs a
             personalized day-by-day itinerary in seconds.
           </p>
+
+          {/* Stats row EXACTLY like before (but animated) */}
+          <div className="mt-8 grid grid-cols-3 gap-8 max-w-3xl mx-auto">
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                {destinationsCount}+
+              </div>
+              <div className="text-white/80">Destinations</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                {happyTravelersCount}K+
+              </div>
+              <div className="text-white/80">Happy Travelers</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                {ratingDone ? "4.9" : ratingCount}
+              </div>
+              <div className="text-white/80">Average rating</div>
+            </div>
+          </div>
         </div>
 
         {/* Search / planner card */}
@@ -130,13 +185,13 @@ export const Hero = () => {
                   <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Destination
                   </span>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100 shadow-[0_1px_0_rgba(15,23,42,0.04)] focus-within:ring-2 focus-within:ring-orange-300/70 focus-within:border-orange-200 transition">
                     <MapPin className="h-5 w-5 text-sky-600 shrink-0" />
                     <Input
                       placeholder="Dubai, Paris, Bali..."
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
-                      className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-sm md:text-base placeholder:text-slate-400"
                     />
                   </div>
                   <p className="text-[11px] text-slate-400">
@@ -149,23 +204,23 @@ export const Hero = () => {
                   <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Travel dates
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100 shadow-[0_1px_0_rgba(15,23,42,0.04)] focus-within:ring-2 focus-within:ring-orange-300/70 focus-within:border-orange-200 transition">
                       <Calendar className="h-5 w-5 text-sky-600 shrink-0" />
                       <Input
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-sm md:text-base"
                       />
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100 shadow-[0_1px_0_rgba(15,23,42,0.04)] focus-within:ring-2 focus-within:ring-orange-300/70 focus-within:border-orange-200 transition">
                       <Calendar className="h-5 w-5 text-sky-400 shrink-0" />
                       <Input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-sm md:text-base"
                       />
                     </div>
                   </div>
@@ -182,14 +237,14 @@ export const Hero = () => {
                     <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
                       Travelers
                     </span>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100 shadow-[0_1px_0_rgba(15,23,42,0.04)] focus-within:ring-2 focus-within:ring-orange-300/70 focus-within:border-orange-200 transition">
                       <Users className="h-5 w-5 text-sky-600 shrink-0" />
                       <Input
                         type="number"
                         min={1}
                         value={travelers}
                         onChange={(e) => setTravelers(e.target.value)}
-                        className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-sm md:text-base"
                       />
                     </div>
                   </div>
@@ -203,7 +258,7 @@ export const Hero = () => {
                       value={budget}
                       onValueChange={(v) => setBudget(v)}
                     >
-                      <SelectTrigger className="w-full rounded-xl bg-slate-50 border border-slate-100 text-sm">
+                      <SelectTrigger className="w-full rounded-2xl bg-slate-50/80 border border-slate-100 text-sm shadow-[0_1px_0_rgba(15,23,42,0.04)] focus:ring-2 focus:ring-orange-300/70 focus:border-orange-200">
                         <div className="flex items-center gap-2">
                           <DollarSign className="h-4 w-4 text-sky-600" />
                           <SelectValue placeholder="Select budget" />
@@ -211,7 +266,9 @@ export const Hero = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="flexible">Flexible</SelectItem>
-                        <SelectItem value="budget">Budget-friendly</SelectItem>
+                        <SelectItem value="budget">
+                          Budget-friendly
+                        </SelectItem>
                         <SelectItem value="mid-range">Mid-range</SelectItem>
                         <SelectItem value="luxury">Luxury</SelectItem>
                       </SelectContent>
@@ -253,7 +310,7 @@ export const Hero = () => {
                     placeholder="Add your own (e.g. street food, museums, hiking)"
                     value={interestInput}
                     onChange={(e) => setInterestInput(e.target.value)}
-                    className="border border-slate-200 bg-slate-50 rounded-xl text-sm focus-visible:ring-sky-500 focus-visible:ring-offset-0"
+                    className="border border-slate-200 bg-slate-50/80 rounded-2xl text-sm focus-visible:ring-sky-500 focus-visible:ring-offset-0"
                   />
                   <p className="text-[11px] text-slate-400">
                     Choose a few themes or type anything you love – AI will
@@ -266,7 +323,7 @@ export const Hero = () => {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full justify-center rounded-xl bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-md hover:from-orange-500 hover:to-orange-600"
+                    className="w-full justify-center rounded-2xl bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-md hover:from-orange-500 hover:to-orange-600"
                   >
                     <Search className="mr-2 h-4 w-4" />
                     Plan Trip
@@ -284,72 +341,47 @@ export const Hero = () => {
             </div>
           </Card>
 
-          {/* Stats row – keep existing feel */}
-          <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto">
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-                500+
-              </div>
-              <div className="text-white/80">Destinations</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-                50K+
-              </div>
-              <div className="text-white/80">Happy Travelers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-                4.9
-              </div>
-              <div className="text-white/80">Average rating</div>
-            </div>
-          </div>
-
           {/* AI Itinerary Result */}
-        {showResults && payload && (
-          <>
-            <Card className="mt-10 p-6 md:p-8 bg-white/95 shadow-xl">
-              <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
-                <div>
-                  <h2 className="text-xl md:text-2xl font-semibold text-slate-900">
-                    Your AI-crafted itinerary
-                  </h2>
-                  <p className="text-sm text-slate-600">
-                    {payload.destination} · {payload.startDate} – {payload.endDate} ·{" "}
-                    {payload.travelers} traveler
-                    {payload.travelers > 1 ? "s" : ""} ·{" "}
-                    {payload.budget === "flexible"
-                      ? "Flexible budget"
-                      : `${payload.budget} trip`}
-                  </p>
-                  {payload.interests && (
-                    <p className="text-xs text-slate-500 mt-1">
-                      Focused on: {payload.interests}
+          {showResults && payload && (
+            <>
+              <Card className="mt-10 p-6 md:p-8 bg-white/95 shadow-xl">
+                <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-semibold text-slate-900">
+                      Your AI-crafted itinerary
+                    </h2>
+                    <p className="text-sm text-slate-600">
+                      {payload.destination} · {payload.startDate} –{" "}
+                      {payload.endDate} · {payload.travelers} traveler
+                      {payload.travelers > 1 ? "s" : ""} ·{" "}
+                      {payload.budget === "flexible"
+                        ? "Flexible budget"
+                        : `${payload.budget} trip`}
                     </p>
-                  )}
+                    {payload.interests && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        Focused on: {payload.interests}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <StreamText<ItineraryPayload & StreamBody>
-                endpoint="/api/itinerary"
-                body={payload}
-                autoRun
+                <StreamText<ItineraryPayload & StreamBody>
+                  endpoint="/api/itinerary"
+                  body={payload}
+                  autoRun
+                />
+              </Card>
+
+              <WeatherStrip
+                destination={payload.destination}
+                startDate={payload.startDate}
+                endDate={payload.endDate}
               />
-            </Card>
 
-            {/* Compact weather strip */}
-            <WeatherStrip
-              destination={payload.destination}
-              startDate={payload.startDate}
-              endDate={payload.endDate}
-            />
-
-            {/* AI reasoning accordion */}
-            <ReasoningAccordion payload={payload} />
-          </>
-        )}
-
+              <ReasoningAccordion payload={payload} />
+            </>
+          )}
         </div>
       </div>
     </section>

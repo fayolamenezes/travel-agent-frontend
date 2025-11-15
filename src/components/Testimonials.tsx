@@ -81,6 +81,7 @@ const testimonials = [
 export const Testimonials = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
+  const maxScrollRef = useRef(0);
   const isDraggingRef = useRef(false);
 
   const createTween = () => {
@@ -89,6 +90,8 @@ export const Testimonials = () => {
 
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll <= 0) return;
+
+    maxScrollRef.current = maxScroll;
 
     const tween = gsap.to(el, {
       scrollLeft: maxScroll,
@@ -115,9 +118,18 @@ export const Testimonials = () => {
   };
 
   const resumeAuto = () => {
-    // kill old tween and recreate from current position
-    tweenRef.current?.kill();
-    createTween();
+    const el = carouselRef.current;
+    const tween = tweenRef.current;
+    if (!el || !tween) return;
+
+    const maxScroll =
+      maxScrollRef.current || el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 0) return;
+
+    // Sync tween progress to current scrollLeft so speed stays constant
+    const progress = el.scrollLeft / maxScroll;
+    tween.progress(progress);
+    tween.play();
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
