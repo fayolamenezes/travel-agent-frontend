@@ -1,163 +1,217 @@
-# TravelAgent --- AI-Powered Travel Planning Experience
+# AI Travel Guide -- README
 
-*A modern, animated, React + TypeScript travel planner built for a
-fullstack interview assignment.*
-
-```
-## Overview
-
-**TravelAgent** is a fully responsive, animated travel-planning
-experience.\
-Users can enter their destination, dates, budget, and interests --- and
-instantly receive:
-
--   A **custom AI-generated itinerary**
--   A **weather summary** for their exact travel dates
--   A **reasoning accordion** explaining *why* the system suggested that
-    plan
--   Beautiful animated sections:
-    -   Featured Deals
-    -   Popular Destinations
-    -   Travel Categories
-    -   Testimonials
-    -   Footer with newsletter + social links
-
-This project demonstrates:
-
--   Advanced UI/UX\
--   GSAP scroll animations\
--   API integration\
--   Proper React component architecture\
--   Clean CSS design tokens\
--   Production-quality TypeScript code
-
-## Features
-
-### 1. Smart Trip Planner (Core Feature)
-
-The planner (in the Hero section):
-
--   Collects destination, dates, travelers, budget, interests
--   Sends a structured request to the backend
--   Displays:
-    -   AI itinerary
-    -   WeatherStrip (filtered to user's travel dates)
-    -   ReasoningAccordion (why the itinerary makes sense)
--   Streams itinerary text for an "AI assistant" feeling
-
-### 2. Advanced UI/UX + Animation System
-
--   GSAP ScrollTrigger used for:
-    -   Featured Deals pinned scrollytelling stack
-    -   Horizontal animated category cards
-    -   Smooth fade + transform effects
--   shadcn/ui + Tailwind CSS
--   Animated shadows, gradients, hover effects
--   Clean information hierarchy
-
-### 3. Neon Background System
-
-Full-screen animated background layer:
-
--   Faint low-opacity dotted grid\
--   Falling neon light streaks\
--   Uses CSS gradients + JavaScript-generated random neon lines\
--   Colors are linked to the Featured Deals color palette
-
-### 4. Marketing Sections
-
--   **Destinations:** responsive image cards with star ratings\
--   **Featured Deals:** stacked animated cards\
--   **Categories:** 5 types of trips with scroll animations\
--   **Testimonials:** subtle motion + glassy cards\
--   **Footer:** newsletter, company info, and quick links
-
-## Project Structure
-
-    src/
-     ├─ components/
-     │   ├─ Header.tsx
-     │   ├─ Hero.tsx
-     │   ├─ Destinations.tsx
-     │   ├─ FeaturedDeals.tsx
-     │   ├─ Categories.tsx
-     │   ├─ Testimonials.tsx
-     │   ├─ WeatherStrip.tsx
-     │   ├─ ReasoningAccordion.tsx
-     │   └─ Footer.tsx
-     │
-     ├─ lib/
-     │   ├─ api.ts
-     │   └─ apiBase.ts
-     │
-     ├─ pages/
-     │   └─ Index.tsx
-     │
-     ├─ App.tsx
-     ├─ main.tsx
-     └─ styles/index.css
-
-## Tech Stack
-
-### Frontend
-
--   React 19\
--   TypeScript\
--   React Router\
--   Vite\
--   Tailwind CSS\
--   shadcn/ui\
--   lucide-react icons
-
-### Animations
-
--   GSAP\
--   ScrollTrigger plugin
-
-### Extra UX Libraries
-
--   Sonner\
--   shadcn Toaster\
--   Radix Tooltip Provider\
--   Streaming text library
-
-## Key Architectural Concepts
-
-### 1. **Design Tokens**
-
-All colors, gradients, shadows, radii, and animations are defined in
-`index.css`.
-
-### 2. **API Helper Layer**
-
-Typed API functions stored in `/lib`.
-
-### 3. **GSAP Lifecycle Safety**
-
-All GSAP animations have cleanup & reinit logic.
-
-## Setup & Development
-
-### Install
-
-    npm install
-
-### Run Dev Server
-
-    npm run dev
-
-### Build
-
-    npm run build
-
-### Preview
-
-    npm run preview
-
-## 🔧 Environment Variables
-
-Create `.env`:
-
-    VITE_API_BASE_URL=http://localhost:3000
+An AI-powered travel planning application built with **Next.js**,
+**OpenAI**, **MongoDB**, and **OpenWeather**.\
+Users can generate fully personalized, multi-day travel itineraries
+based on their preferences, live weather, and trip duration. The app
+streams the itinerary in real time, explains the planning logic, and
+displays weather forecasts---creating an immersive, intelligent
+trip-building experience.
 
 ------------------------------------------------------------------------
+
+## **Features**
+
+### ** AI-Generated Itineraries**
+
+-   Uses OpenAI's `gpt-4o-mini` model.
+-   Generates multi-day itineraries based on:
+    -   Destination\
+    -   Dates\
+    -   Interests\
+    -   Travelers\
+    -   Budget\
+    -   Live weather\
+-   Streams the itinerary text in real time for a chat-like UX.
+
+### ** Live Weather Integration**
+
+-   Fetches city coordinates via OpenWeather Geocoding API.
+-   Fetches 5--7 day weather forecasts.
+-   Groups forecast by day (avg temperature, dominant description).
+-   Renders a friendly weather widget with emojis.
+
+### ** Reasoning Timeline (Public-Safe Explanation)**
+
+-   Generates a short, human-readable "how we planned this" breakdown.
+-   Each line is a bullet point representing one planning step.
+-   Does *not* expose private chain-of-thought.
+
+### ** Save & Retrieve Itineraries**
+
+-   MongoDB + Mongoose to store:
+    -   user inputs\
+    -   generated plan text\
+    -   timestamps\
+-   Dedicated API routes for saving and fetching recent itineraries.
+
+### ** Suggested Trips**
+
+-   Server-side page showing curated travel suggestions.
+-   Fallback built-in list if API call fails.
+
+### ** Modern UI**
+
+-   Built with:
+    -   Next.js App Router\
+    -   Tailwind CSS\
+    -   React Hook Form\
+    -   Lucide Icons\
+-   Gradient theme, polished cards, icons inside inputs, animated
+    streaming text.
+
+------------------------------------------------------------------------
+
+## **Tech Stack**
+
+### **Frontend**
+
+-   Next.js 14 (App Router)
+-   React 19
+-   TypeScript
+-   Tailwind CSS
+-   react-hook-form
+-   react-markdown + remark-gfm
+
+### **Backend**
+
+-   Next.js API routes (Edge + Node runtimes)
+-   OpenAI SDK
+-   OpenWeather REST API
+-   MongoDB / Mongoose
+
+### **Streaming**
+
+-   Custom `ReadableStream` wrapper for AI responses.
+-   Real-time streaming UI with abort support.
+
+------------------------------------------------------------------------
+
+## **Folder Structure**
+
+    travel-agent-backend-main/
+    │
+    ├── app/
+    │   ├── page.tsx                → Home (Itinerary Builder)
+    │   ├── trips/page.tsx          → Suggested Trips Page
+    │   ├── layout.tsx              → Root layout + Navbar
+    │   ├── globals.css             → Tailwind + global styles
+    │   │
+    │   ├── api/
+    │   │   ├── itinerary/route.ts          → Generate AI itinerary (stream)
+    │   │   ├── itinerary/save/route.ts     → Save itinerary to MongoDB
+    │   │   ├── itineraries/route.ts        → Fetch recent itineraries
+    │   │   ├── reasoning/route.ts          → Generate reasoning timeline
+    │   │   ├── suggested/route.ts          → Suggested trips
+    │   │   └── weather/route.ts            → Weather integration
+    │
+    ├── components/
+    │   ├── StreamText.tsx          → Handles streaming OpenAI responses
+    │   ├── ReasoningTimeline.tsx   → Timeline explanation component
+    │   ├── WeatherWidget.tsx       → Weather forecast display
+    │   └── MarkdownViewer.tsx      → Markdown rendering wrapper
+    │
+    ├── lib/
+    │   └── db.ts                   → MongoDB connection helper
+    │
+    ├── models/
+    │   └── Itinerary.ts            → Mongoose schema for itineraries
+    │
+    ├── tailwind.config.ts
+    ├── tsconfig.json
+    ├── package.json
+    └── README.md (this file)
+
+------------------------------------------------------------------------
+
+## **Environment Variables**
+
+Create a `.env.local` file:
+
+``` env
+OPENAI_API_KEY=your_openai_key
+OPENWEATHER_API_KEY=your_openweather_key
+MONGODB_URI=your_mongodb_uri
+MONGODB_DB=ai-travel-guide
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+------------------------------------------------------------------------
+
+## **Getting Started**
+
+### **1. Install dependencies**
+
+``` bash
+npm install
+```
+
+### **2. Run development server**
+
+``` bash
+npm run dev
+```
+
+App will run at:
+
+    http://localhost:3000
+
+------------------------------------------------------------------------
+
+## 📡 API Routes Summary
+
+  ----------------------------------------------------------------------------------
+  Route                   Method         Runtime            Description
+  ----------------------- -------------- ------------------ ------------------------
+  `/api/itinerary`        POST           Edge               Stream AI-generated
+                                                            itinerary
+
+  `/api/itinerary/save`   POST           Node               Save itinerary to
+                                                            MongoDB
+
+  `/api/itineraries`      GET            Node               Retrieve recent
+                                                            itineraries
+
+  `/api/reasoning`        POST           Edge               Generate public-safe
+                                                            planning timeline
+
+  `/api/weather`          GET            Edge               Fetch and group weather
+                                                            forecast
+
+  `/api/suggested`        GET            Edge               Return static suggested
+                                                            trips
+  ----------------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## **How It Works (High-Level)**
+
+1.  User submits trip details.
+2.  Backend fetches weather forecast via OpenWeather.
+3.  Backend sends user input + weather context to OpenAI.
+4.  OpenAI returns streaming markdown text.
+5.  `StreamText.tsx` renders the itinerary in real-time.
+6.  User can click "Explain how we planned this" to get a reasoning
+    timeline.
+7.  User can save the itinerary to MongoDB.
+8.  User can explore a curated suggestions page.
+
+------------------------------------------------------------------------
+
+## **Key Highlights for Interviews**
+
+-   Demonstrates mastery of **Next.js App Router** and mixed runtimes
+    (Edge + Node).
+-   Shows environmental configuration, streaming, state management, and
+    form validation.
+-   Uses modern UX: streaming text, icons, weather cards, collapsible
+    sections.
+-   Integrates multiple external APIs and combines structured +
+    unstructured data.
+-   Clean component architecture and well-separated concerns.
+
+------------------------------------------------------------------------
+
+## **License**
+
+MIT License.
