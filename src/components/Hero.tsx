@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect, useRef } from "react";
 import {
   Search,
   MapPin,
@@ -25,7 +25,7 @@ import {
 import StreamText, { StreamBody } from "@/components/StreamText";
 import heroImage from "@/assets/hero-beach.jpg";
 
-// 👇 add ScrollTrigger import so we can refresh after layout changes
+// 👇 Needed so we can refresh when layout changes
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 type ItineraryPayload = {
@@ -63,6 +63,9 @@ export const Hero = () => {
   const [ratingCount, setRatingCount] = useState(0);
   const [ratingDone, setRatingDone] = useState(false);
 
+  // ⬇️ Container for all "results" content (itinerary + weather + reasoning)
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     const animateValue = (
       setter: (v: number) => void,
@@ -90,19 +93,71 @@ export const Hero = () => {
     animateValue(setRatingCount, 4, 1200, () => setRatingDone(true));
   }, []);
 
-  // 👇 IMPORTANT: when results appear and hero height grows, refresh ScrollTrigger
+  /**
+   * 🔑 KEY PART:
+   * When results are visible, we watch the results container for DOM changes
+   * (streaming text, accordions, etc.) and refresh ScrollTrigger any time
+   * the layout inside it changes.
+   */
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (!showResults) return;
 
-    const id = window.setTimeout(() => {
+    const el = resultsRef.current;
+    if (!el) {
+      // Fallback: just do a one-off refresh
       try {
         ScrollTrigger.refresh();
       } catch {
-        // ignore if ScrollTrigger isn't available for some reason
+        //
       }
-    }, 100);
+      return;
+    }
 
-    return () => window.clearTimeout(id);
+    let frame: number | null = null;
+
+    const scheduleRefresh = () => {
+      if (frame != null) {
+        cancelAnimationFrame(frame);
+      }
+      frame = requestAnimationFrame(() => {
+        try {
+          ScrollTrigger.refresh();
+        } catch {
+          // ignore
+        }
+      });
+    };
+
+    // Initial refresh when results mount
+    scheduleRefresh();
+
+    // If MutationObserver isn't supported for some reason, just bail after initial refresh
+    if (typeof MutationObserver === "undefined") {
+      return () => {
+        if (frame != null) {
+          cancelAnimationFrame(frame);
+        }
+      };
+    }
+
+    const observer = new MutationObserver(() => {
+      // Any DOM changes inside results area -> recalc triggers
+      scheduleRefresh();
+    });
+
+    observer.observe(el, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    return () => {
+      observer.disconnect();
+      if (frame != null) {
+        cancelAnimationFrame(frame);
+      }
+    };
   }, [showResults]);
 
   const toggleInterest = (interest: string) => {
@@ -363,7 +418,7 @@ export const Hero = () => {
 
           {/* AI Itinerary Result */}
           {showResults && payload && (
-            <>
+            <div ref={resultsRef}>
               <Card className="mt-10 p-6 md:p-8 bg-white/95 shadow-xl">
                 <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
                   <div>
@@ -400,7 +455,7 @@ export const Hero = () => {
               />
 
               <ReasoningAccordion payload={payload} />
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -343,3 +343,56 @@ html,
 body {
   overflow-x: hidden;
 }
+
+/* ====== D O T T E D   B A C K G R O U N D ====== */
+
+.neon-drips-bg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+  background-size: 20px 20px;
+  /* faint orange dots */
+  background-image: radial-gradient(
+    rgba(255, 140, 60, 0.16) 1px,
+    transparent 1px
+  );
+}
+
+/* ====== N E O N   L I N E S ====== */
+
+.neon-line {
+  position: absolute;
+  width: 2px;
+  border-radius: 1px;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: neonFall var(--dur, 8s) ease-out forwards;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.25));
+}
+
+@keyframes neonFall {
+  0% {
+    transform: translateY(var(--yStart, -140px));
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(100vh + 220px));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neon-line {
+    display: none;
+  }
+}

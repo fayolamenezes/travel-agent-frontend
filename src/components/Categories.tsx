@@ -71,7 +71,7 @@ export const Categories = () => {
       // About 3 viewport heights of scroll, similar to 400vh track with 100vh pinned
       const scrollDistance = () => (window.innerHeight || 800) * 3;
 
-      // --- INITIAL STATES (same as original GSAP logic) ---
+      // --- INITIAL STATES ---
       const nonCenter: HTMLElement[] = [];
       cards.forEach((card, i) => {
         if (i !== 2) nonCenter.push(card);
@@ -82,7 +82,7 @@ export const Categories = () => {
       gsap.set(container, { scale: 1.2, y: 30, force3D: true });
       gsap.set(cards, { force3D: true });
 
-      // --- 1) PIN TRIGGER (no animation attached) ---
+      // --- 1) PIN TRIGGER ---
       const pinTrigger = ScrollTrigger.create({
         trigger: section,
         start: "top top",
@@ -94,9 +94,9 @@ export const Categories = () => {
         refreshPriority: -50,
       });
 
-      // --- 2) ANIMATION TIMELINE (scrubbed purely by scroll) ---
+      // --- 2) ANIMATION TIMELINE ---
       const tl = gsap.timeline({
-        defaults: { ease: "none" }, // no easing, perfect scrub mapping
+        defaults: { ease: "none" }, // perfect scrub
       });
 
       // 1) Center card settles a bit
@@ -148,12 +148,11 @@ export const Categories = () => {
         trigger: section,
         start: "top top",
         end: () => "+=" + scrollDistance(),
-        // 👇 This is the key change: no smoothing, purely scroll-locked
         scrub: true,
         invalidateOnRefresh: true,
       });
 
-      // Ensure everything recalculates once layout/fonts/images settle
+      // Make sure everything recalculates once layout/fonts/images settle
       requestAnimationFrame(() => {
         setTimeout(() => {
           ScrollTrigger.refresh(true);
@@ -173,7 +172,10 @@ export const Categories = () => {
   }, []);
 
   return (
-    <section ref={rootRef} className="bg-gradient-subtle">
+    <section
+      ref={rootRef}
+      className="bg-gradient-subtle overflow-x-hidden"
+    >
       {/* On mobile: behaves like normal section (no pin, height auto)
           On desktop: ScrollTrigger adds spacing for the pinned duration */}
       <div data-categories-section className="relative">

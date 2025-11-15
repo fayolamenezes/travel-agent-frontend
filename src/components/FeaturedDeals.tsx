@@ -1,14 +1,27 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Percent, TrendingUp } from "lucide-react";
+import {
+  Clock,
+  Percent,
+  TrendingUp,
+  Plane,
+  TreePalm,
+  Building2,
+  Mountain,
+  Waves,
+  Trees,
+  Tent,
+} from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
+
+type DealTone = "secondary" | "primary" | "accent";
 
 type Deal = {
   id: number;
@@ -19,6 +32,7 @@ type Deal = {
   timeLeft: string;
   tag: string;
   gradient: string;
+  tone: DealTone;
 };
 
 const deals: Deal[] = [
@@ -31,6 +45,7 @@ const deals: Deal[] = [
     timeLeft: "3 days left",
     tag: "Hot Deal",
     gradient: "from-secondary to-secondary/80",
+    tone: "secondary",
   },
   {
     id: 2,
@@ -41,6 +56,7 @@ const deals: Deal[] = [
     timeLeft: "5 days left",
     tag: "Popular",
     gradient: "from-primary to-primary-glow",
+    tone: "primary",
   },
   {
     id: 3,
@@ -51,6 +67,7 @@ const deals: Deal[] = [
     timeLeft: "2 days left",
     tag: "Last Chance",
     gradient: "from-accent to-accent/80",
+    tone: "accent",
   },
   {
     id: 4,
@@ -61,6 +78,7 @@ const deals: Deal[] = [
     timeLeft: "7 days left",
     tag: "New",
     gradient: "from-primary to-primary-glow",
+    tone: "primary",
   },
   {
     id: 5,
@@ -71,8 +89,115 @@ const deals: Deal[] = [
     timeLeft: "6 days left",
     tag: "Limited",
     gradient: "from-secondary to-secondary/80",
+    tone: "secondary",
   },
 ];
+
+// Inline styles so they win over .dfx-tab CSS
+const tabStyleForTone = (tone: DealTone): CSSProperties => {
+  switch (tone) {
+    case "secondary":
+      return {
+        background: "hsl(var(--secondary) / 0.10)",
+        borderColor: "hsl(var(--secondary) / 0.45)",
+        color: "hsl(var(--secondary))",
+      };
+    case "primary":
+      return {
+        background: "hsl(var(--primary-glow) / 0.10)",
+        borderColor: "hsl(var(--primary-glow) / 0.45)",
+        color: "hsl(var(--primary-glow))",
+      };
+    case "accent":
+      return {
+        background: "hsl(var(--accent) / 0.10)",
+        borderColor: "hsl(var(--accent) / 0.45)",
+        color: "hsl(var(--accent))",
+      };
+  }
+};
+
+const tabDotStyleForTone = (tone: DealTone): CSSProperties => {
+  switch (tone) {
+    case "secondary":
+      return { background: "hsl(var(--secondary))" };
+    case "primary":
+      return { background: "hsl(var(--primary-glow))" };
+    case "accent":
+      return { background: "hsl(var(--accent))" };
+  }
+};
+
+// Icons OUTSIDE the card, left + right, clearly visible
+const DealSideIcons = ({ id }: { id: number }) => {
+  const base =
+    "pointer-events-none absolute z-0 text-secondary/60 opacity-80 md:opacity-90";
+
+  switch (id) {
+    case 1: // Summer Beach Getaway
+      return (
+        <>
+          <TreePalm
+            className={`${base} left-[-80px] top-8 h-24 w-24 md:h-32 md:w-32 rotate-6`}
+          />
+          <Waves
+            className={`${base} right-[-80px] bottom-10 h-24 w-24 md:h-32 md:w-32 -rotate-6`}
+          />
+        </>
+      );
+
+    case 2: // European City Tour
+      return (
+        <>
+          <Building2
+            className={`${base} left-[-80px] top-10 h-24 w-24 md:h-32 md:w-32`}
+          />
+          <Plane
+            className={`${base} right-[-90px] bottom-8 h-20 w-20 md:h-28 md:w-28 -rotate-12`}
+          />
+        </>
+      );
+
+    case 3: // Adventure Safari
+      return (
+        <>
+          <Trees
+            className={`${base} left-[-80px] top-10 h-24 w-24 md:h-32 md:w-32`}
+          />
+          <Tent
+            className={`${base} right-[-90px] bottom-8 h-20 w-20 md:h-28 md:w-28`}
+          />
+        </>
+      );
+
+    case 4: // Tropical Island Escape
+      return (
+        <>
+          <TreePalm
+            className={`${base} left-[-80px] top-10 h-24 w-24 md:h-32 md:w-32 rotate-3`}
+          />
+          <Waves
+            className={`${base} right-[-80px] bottom-10 h-24 w-24 md:h-32 md:w-32`}
+          />
+        </>
+      );
+
+    case 5: // Mountain Retreat Weekend
+      return (
+        <>
+          <Mountain
+            className={`${base} left-[-80px] top-10 h-24 w-24 md:h-32 md:w-32`}
+          />
+          <Trees
+            className={`${base} right-[-80px] bottom-10 h-20 w-20 md:h-28 md:w-28`}
+          />
+        </>
+      );
+
+    default:
+      return null;
+  }
+};
 
 export const FeaturedDeals = () => {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -136,7 +261,7 @@ export const FeaturedDeals = () => {
 
     const recalc = () => {
       viewportHeight = getVH();
-      // ↓↓ Reduced spacing between stacked cards (and gap to tabs)
+      // Reduced spacing between stacked cards (and gap to tabs)
       spacing = viewportHeight * 0.03;
 
       const isMobile = window.matchMedia("(max-width: 768px)").matches;
@@ -173,15 +298,14 @@ export const FeaturedDeals = () => {
     const scrollTween = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top 40px", // section hits near top of viewport
+        start: "top 40px",
         end: () => `+=${scrollDistance}`,
         scrub: true,
-        pin: section, // or pin: true
+        pin: section,
         pinSpacing: true,
         anticipatePin: 1,
         id: "dfxStackPin",
         invalidateOnRefresh: true,
-        // markers: true,
       },
     });
 
@@ -336,14 +460,12 @@ export const FeaturedDeals = () => {
           Exclusive <span className="text-gradient">Travel Deals</span>
         </h2>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-          Don&apos;t miss out on these incredible offers – book now and save
-          big!
+          Don&apos;t miss out on these incredible offers – book now and save big!
         </p>
       </div>
 
       {/* Pinned / animated area */}
-      <div className="dfx" ref={rootRef}>
-        {/* Remove internal padding from pinned section */}
+      <div className="dfx overflow-x-hidden" ref={rootRef}>
         <section className="dfx-section p-0">
           <div className="dfx-tabs-anchor">
             <div className="container mx-auto px-4">
@@ -351,15 +473,22 @@ export const FeaturedDeals = () => {
                 {deals.map((deal, index) => (
                   <button
                     key={deal.id}
-                    className="dfx-tab flex-shrink-0 rounded-full bg-muted px-6 py-3 text-left cursor-pointer border border-border/60 shadow-[0_10px_25px_rgba(15,23,42,0.04)] hover:border-primary hover:bg-background/80 transition-colors"
+                    className="dfx-tab flex-shrink-0 rounded-full px-6 py-3 text-left cursor-pointer border shadow-[0_10px_25px_rgba(15,23,42,0.06)] bg-background/60 backdrop-blur-sm transition-all hover:-translate-y-[1px] hover:shadow-medium"
                     data-index={index}
                     type="button"
+                    style={tabStyleForTone(deal.tone)}
                   >
                     <div className="text-sm font-semibold truncate">
                       {deal.title}
                     </div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      {deal.discount}% OFF • {deal.timeLeft}
+                    <div className="mt-1 inline-flex items-center gap-2 text-[11px]">
+                      <span
+                        className="inline-block h-1.5 w-1.5 rounded-full"
+                        style={tabDotStyleForTone(deal.tone)}
+                      />
+                      <span className="opacity-80">
+                        {deal.discount}% OFF • {deal.timeLeft}
+                      </span>
                     </div>
                   </button>
                 ))}
@@ -370,12 +499,15 @@ export const FeaturedDeals = () => {
             <div className="-mt-12">
               {deals.map((deal) => (
                 <div
-                  className="dfx-card mx-auto"
+                  className="dfx-card mx-auto w-full max-w-[640px]"
                   key={deal.id}
-                  style={{ width: "min(90vw, 640px)", minHeight: "370px" }}
+                  style={{ minHeight: "370px" }}
                 >
-                  <div className="dfx-card-anim">
-                    <div className="dfx-card-content w-full h-full">
+                  <div className="dfx-card-anim relative">
+                    {/* Side icons left + right of the card */}
+                    <DealSideIcons id={deal.id} />
+
+                    <div className="dfx-card-content relative z-10 w-full h-full">
                       <Card className="w-full h-full overflow-hidden border-0 shadow-medium bg-background">
                         <div
                           className={`p-6 bg-gradient-to-br ${deal.gradient} text-white`}
